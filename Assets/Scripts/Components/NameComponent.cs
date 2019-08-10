@@ -1,12 +1,16 @@
 ﻿using System;
+using Helper;
 using Unity.Entities;
 
-[Serializable]
-public struct Name : IComponentData
+namespace Components
 {
-    public int NameStringIndex;
-}
+    [Serializable]
+    public struct Name : IComponentData
+    {
+        public int NameStringIndex;
+    }
 
 #if UNITY_EDITOR
-public class NameComponent : ComponentStringDataProxy<Name> { }
+    public class NameComponent : ComponentStringDataProxy<Name> { }
 #endif
+}
