@@ -4,19 +4,22 @@ using System.Reflection;
 using Unity.Entities;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
 namespace Helper
 {
-    sealed class WrappedComponentDataAttribute : PropertyAttribute {}
+    sealed class WrappedComponentDataAttribute : PropertyAttribute
+    {
+    }
 
     [ExecuteAlways]
     [RequireComponent(typeof(GameObjectEntity))]
     public abstract class ComponentStringDataProxy<T> : MonoBehaviour, ISerializationCallbackReceiver
         where T : struct, IComponentData
     {
-        private readonly StringHelper stringHelper = StringHelper.GetInstance();
+        private readonly StringHelper _stringHelper = StringHelper.GetInstance();
 
-        [SerializeField, WrappedComponentData] 
-        protected T m_ComponentData;
+        [SerializeField, WrappedComponentData] protected T m_ComponentData;
 
         private FieldInfo[] m_ComponentFields;
 
@@ -25,8 +28,7 @@ namespace Helper
         private List<string> m_LastStringTable;
         private List<string> m_StringIndexList;
 
-        [SerializeField]
-        private List<string> m_StringTable;
+        [SerializeField] private List<string> m_StringTable;
 
         public T Value
         {
@@ -166,7 +168,7 @@ namespace Helper
                 if (m_StringIndexList.Contains(field.Name))
                 {
                     var index = m_StringIndexList.IndexOf(field.Name);
-                    m_StringTable[index] = stringHelper.GetStringByIndex((int) field.GetValue(m_ComponentData));
+                    m_StringTable[index] = _stringHelper.GetStringByIndex((int) field.GetValue(m_ComponentData));
                 }
             }
         }
@@ -180,11 +182,12 @@ namespace Helper
                 if (m_StringIndexList.Contains(field.Name))
                 {
                     var index = m_StringIndexList.IndexOf(field.Name);
-                    var value = stringHelper.SetString(m_StringTable[index]);
+                    var value = _stringHelper.SetString(m_StringTable[index]);
 
                     field.SetValue(obj, value);
                 }
             }
+
             t = (T) obj;
             Value = t;
             SetLastComponentValue();
@@ -250,3 +253,5 @@ namespace Helper
         }
     }
 }
+
+#endif

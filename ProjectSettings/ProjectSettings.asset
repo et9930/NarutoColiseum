@@ -526,6 +526,7 @@ PlayerSettings:
     26: DEBUG_OUTPUT
     27: DEBUG_OUTPUT
     28: DEBUG_OUTPUT
+    29: DEBUG_OUTPUT
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

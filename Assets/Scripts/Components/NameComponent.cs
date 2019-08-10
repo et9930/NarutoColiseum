@@ -11,6 +11,8 @@ namespace Components
     }
 
 #if UNITY_EDITOR
-    public class NameComponent : ComponentStringDataProxy<Name> { }
+    public class NameComponent : ComponentStringDataProxy<Name>
+    {
+    }
 #endif
 }
