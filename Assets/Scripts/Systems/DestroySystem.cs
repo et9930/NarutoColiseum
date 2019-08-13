@@ -3,9 +3,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine.Experimental.PlayerLoop;
 
 namespace Systems
 {
@@ -26,16 +23,16 @@ namespace Systems
 
             public void Execute(Entity entity, int jobIndex, [ReadOnly] ref Destroy destroy)
             {
+                
                 CommandBuffer.DestroyEntity(jobIndex, entity);
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var commandBuffer = m_Barrier.CreateCommandBuffer().ToConcurrent();
             var job = new DestroyEntity
             {
-                CommandBuffer = commandBuffer,
+                CommandBuffer = m_Barrier.CreateCommandBuffer().ToConcurrent()
             }.Schedule(this, inputDeps);
 
             m_Barrier.AddJobHandleForProducer(job);

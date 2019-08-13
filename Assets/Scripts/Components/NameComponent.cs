@@ -7,11 +7,11 @@ namespace Components
     [Serializable]
     public struct Name : IComponentData
     {
-        public int NameStringIndex;
+        public Words name;
     }
 
 #if UNITY_EDITOR
-    public class NameComponent : ComponentStringDataProxy<Name>
+    public class NameComponent : ComponentDataProxy<Name>
     {
     }
 #endif
