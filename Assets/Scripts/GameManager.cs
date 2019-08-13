@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-//    public GameObject GameObject;
+    //public GameObject GameObject;
     private EntityManager manager;
     private StringHelper stringHelper;
 
@@ -23,17 +23,19 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-//        if (Input.GetKeyDown("space"))
-//        {
-//            NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
-//            manager.Instantiate(GameObject, entities);
-//
+        if (Input.GetKeyDown("space"))
+        {
+            //NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
+            var entity = manager.CreateEntity();
+            var word = new Words();
+            word.SetString("aaa");
+            manager.AddComponentData(entity, new Name{name = word});
 //            foreach (var entity in entities)
 //            {
 //                manager.SetComponentData(entity, new Destroy());
 //            }
-//
-//            entities.Dispose();
-//        }
+
+            //entities.Dispose();
+        }
     }
 }

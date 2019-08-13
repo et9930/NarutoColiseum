@@ -1,13 +1,14 @@
 ﻿using System;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Components
 {
     [Serializable]
-    public struct LogicFrameIndex : IComponentData
+    public struct LogicFrameIndex : ISystemStateComponentData
     {
-        public int Index;
+        public int index;
     }
 
 #if UNITY_EDITOR
