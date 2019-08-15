@@ -1,35 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Components;
+﻿using Components;
 using Helper;
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     //public GameObject GameObject;
-    private EntityManager manager;
-    private StringHelper stringHelper;
+    private EntityManager m_Manager;
+    //private StringHelper m_StringHelper;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        manager = World.Active.EntityManager;
-        stringHelper = StringHelper.GetInstance();
-        
+        m_Manager = World.Active.EntityManager;
+        //m_StringHelper = StringHelper.GetInstance();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown("space"))
         {
             //NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
-            var entity = manager.CreateEntity();
+            var entity = m_Manager.CreateEntity();
             var word = new Words();
             word.SetString("aaa");
-            manager.AddComponentData(entity, new Name{name = word});
+            m_Manager.AddComponentData(entity, new Name {name = word});
 //            foreach (var entity in entities)
 //            {
 //                manager.SetComponentData(entity, new Destroy());

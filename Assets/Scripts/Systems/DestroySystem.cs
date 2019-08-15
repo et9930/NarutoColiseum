@@ -8,7 +8,7 @@ namespace Systems
 {
     public class DestroySystem : JobComponentSystem
     {
-        EntityCommandBufferSystem m_Barrier;
+        private EntityCommandBufferSystem m_Barrier;
 
         protected override void OnCreate()
         {
@@ -16,7 +16,7 @@ namespace Systems
         }
 
         [BurstCompile]
-        struct DestroyEntity : IJobForEachWithEntity<Destroy>
+        private struct DestroyEntity : IJobForEachWithEntity<Destroy>
         {
             [WriteOnly]
             public EntityCommandBuffer.Concurrent CommandBuffer;

@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Components
 {
+    [Serializable]
     public struct Destroy : IComponentData
     {
     }

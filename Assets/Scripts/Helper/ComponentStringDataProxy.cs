@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Helper
 {
-    sealed class WrappedComponentDataAttribute : PropertyAttribute
+    internal sealed class WrappedComponentDataAttribute : PropertyAttribute
     {
     }
 
@@ -137,7 +137,7 @@ namespace Helper
                    && entityManager.HasComponent(entity, GetComponentType());
         }
 
-        void OnValidate()
+        private void OnValidate()
         {
             ValidateSerializedData();
             EntityManager entityManager;
@@ -156,7 +156,7 @@ namespace Helper
             }
         }
 
-        void Reset()
+        private void Reset()
         {
             OnValidate();
         }
