@@ -1,4 +1,5 @@
-﻿using Components;
+﻿using Systems.SystemGroups;
+using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -7,12 +8,9 @@ using UnityEngine;
 
 namespace Systems
 {
-    [UpdateInGroup(typeof(InitializationSystemGroup))]
+    [UpdateInGroup(typeof(FixedUpdateGroup))]
     public class RecordLogicFrameSystem : JobComponentSystem
     {
-        private const float LogicFrameRate = 0.05f;
-        private float m_LogicFrameRateTime;
-
         protected override void OnCreate()
         {
             var barrier = World.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
@@ -24,32 +22,15 @@ namespace Systems
         [BurstCompile]
         private struct RecordLogicFrameSystemJob : IJobForEach<LogicFrameIndex>
         {
-            [ReadOnly] public bool RecordLogicFrame;
-
             public void Execute(ref LogicFrameIndex logicFrameIndex)
             {
-                if (RecordLogicFrame)
-                {
-                    logicFrameIndex.index++;
-                }
+                logicFrameIndex.index++;
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var recordLogicFrame = false;
-            m_LogicFrameRateTime += Time.deltaTime;
-            if (m_LogicFrameRateTime >= LogicFrameRate)
-            {
-                recordLogicFrame = true;
-                m_LogicFrameRateTime -= LogicFrameRate;
-            }
-
-            var job = new RecordLogicFrameSystemJob
-            {
-                RecordLogicFrame = recordLogicFrame
-            };
-
+            var job = new RecordLogicFrameSystemJob();
             return job.Schedule(this, inputDependencies);
         }
     }

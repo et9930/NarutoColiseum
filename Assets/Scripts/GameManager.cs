@@ -13,6 +13,10 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         m_Manager = World.Active.EntityManager;
+        var entity = m_Manager.CreateEntity();
+        var word = new Words();
+        word.SetString("aaa");
+        m_Manager.AddComponentData(entity, new Name { name = word });
         //m_StringHelper = StringHelper.GetInstance();
     }
 
