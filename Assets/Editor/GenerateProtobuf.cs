@@ -5,8 +5,8 @@ using UnityEditor;
 public class GenerateProtobuf : EditorWindow
 {
     private const string generateProtobufMenu = "Tool/Generate Protobuf";
-    private const string proto_exec = "Assets\\Plugins\\ProtoBuf\\bin\\protoc.exe";
-    private const string proto_path = "Assets\\Plugins\\ProtoBuf\\MessagePrototype ";
+    private const string proto_exec = "Assets\\Plugins\\Protobuf\\bin\\protoc.exe";
+    private const string proto_path = "Assets\\Plugins\\Protobuf\\MessagePrototype ";
     private const string csharp_path = "Assets\\Scripts\\Generate\\Protobuf";
 
     [MenuItem(generateProtobufMenu)]
