@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Systems.SystemGroups
+namespace Framework.SystemGroups
 {
     public class FixedUpdateGroup : ComponentSystemGroup
     {

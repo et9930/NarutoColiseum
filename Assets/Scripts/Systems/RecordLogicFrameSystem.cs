@@ -1,5 +1,5 @@
-﻿using Systems.SystemGroups;
-using Components;
+﻿using Components;
+using Framework.SystemGroups;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Systems.SystemGroups
+namespace Framework.SystemGroups
 {
     public class UpdateGroupManager : MonoBehaviour
     {
