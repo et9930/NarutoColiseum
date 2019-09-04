@@ -1,0 +1,6 @@
+syntax = "proto3";
+package protobuf;
+
+message aaa {
+    repeated string qwe = 1;
+}
