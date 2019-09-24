@@ -1,0 +1,12 @@
+syntax = "proto3";
+package protobuf;
+
+message Login {
+    enum Type {
+        nil = 0;
+        a = 1;
+        b = 2;
+    }
+    double aaa = 1;
+    Type bbb = 2;
+}

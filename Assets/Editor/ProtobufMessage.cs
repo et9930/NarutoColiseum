@@ -6,45 +6,28 @@ using UnityEngine;
 
 namespace Editor
 {
-    public enum MessageType
-    {
-        Null = -1,
-        Int32,
-        String,
-    }
-
-    public enum Syntax
-    {
-        Proto2,
-        Proto3
-    }
 
     [Serializable]
     public class MessageItem
     {
-        public string name;
-        public MessageType type;
-        public string customType;
-        public bool repeated;
+        public string Id;
+        public string Name;
+        public string Type;
+        public bool Repeated;
 
         public bool Equals(MessageItem obj)
         {
-            if (name != obj.name)
+            if (Name != obj.Name)
             {
                 return false;
             }
 
-            if (type != obj.type)
+            if (Type != obj.Type)
             {
                 return false;
             }
 
-            if (type != MessageType.Null && customType != obj.customType)
-            {
-                return false;
-            }
-
-            if (repeated != obj.repeated)
+            if (Repeated != obj.Repeated)
             {
                 return false;
             }
@@ -58,27 +41,54 @@ namespace Editor
 
             str += "    ";
 
-            if (repeated)
+            if (Repeated)
             {
                 str += "repeated ";
             }
 
-            switch (type)
+            str += Type + " ";
+
+            str += Name + " ";
+
+            str += "= " + Id + ";\n";
+
+            return str;
+        }
+    }
+
+    [Serializable]
+    public class EnumItem
+    {
+        public string Name;
+        public Dictionary<string, string> EnumItems;
+
+        public bool Equals(EnumItem obj)
+        {
+            if (Name != obj.Name)
             {
-                case MessageType.Null:
-                    str += customType + " ";
-                    break;
-                case MessageType.Int32:
-                    str += "int32 ";
-                    break;
-                case MessageType.String:
-                    str += "string ";
-                    break;
-                default:
-                    break;
+                return false;
             }
 
-            str += name + " ";
+            if (EnumItems != obj.EnumItems)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override string ToString()
+        {
+            var str = "    ";
+
+            str += "enum " + Name + " {\n";
+
+            foreach (var item in EnumItems)
+            {
+                str += "        " + item.Key + " = " + item.Value + ";\n";
+            }
+
+            str += "    }\n";
 
             return str;
         }
@@ -87,34 +97,28 @@ namespace Editor
     [Serializable]
     public class ProtobufMessage
     {
-        public Syntax syntax;
-        public string package;
-        public string name;
-        public List<MessageItem> messageItems;
+        public string Name;
+        public List<MessageItem> MessageItems;
+        public List<EnumItem> EnumItems;
 
         public bool Equals(ProtobufMessage obj)
         {
-            if (syntax != obj.syntax)
+            if (Name != obj.Name)
             {
                 return false;
             }
 
-            if (package != obj.package)
+            if (MessageItems.Count != obj.MessageItems.Count)
             {
                 return false;
             }
 
-            if (name != obj.name)
+            if (MessageItems.Where((t, i) => !t.Equals(obj.MessageItems[i])).Any())
             {
                 return false;
             }
 
-            if (messageItems.Count != obj.messageItems.Count)
-            {
-                return false;
-            }
-
-            if (messageItems.Where((t, i) => !t.Equals(obj.messageItems[i])).Any())
+            if (EnumItems.Where((t, i) => !t.Equals(obj.EnumItems[i])).Any())
             {
                 return false;
             }
@@ -127,29 +131,20 @@ namespace Editor
         {
             string str = "";
 
-            str += "syntax = \"";
-            switch (syntax)
+            str += "syntax = \"proto3\";\n";
+
+            str += "package protobuf;\n\n";
+
+            str += "message " + Name.Substring(0, 1).ToUpper() + Name.Substring(1) + " {\n";
+
+            foreach (var enumItem in EnumItems)
             {
-                case Syntax.Proto2:
-                    str += "proto2";
-                    break;
-                case Syntax.Proto3:
-                    str += "proto3";
-                    break;
-                default:
-                    break;
+                str += enumItem.ToString();
             }
-            str += "\";\n";
 
-            str += "package " + package + ";\n\n";
-
-            str += "message " + name + " {\n";
-
-            for (var i = 1; i <= messageItems.Count; i++)
+            foreach (var messageItem in MessageItems)
             {
-                var messageItem = messageItems[i-1];
                 str += messageItem.ToString();
-                str += "= " + i + ";\n";
             }
 
             str += "}";
