@@ -24,12 +24,12 @@ namespace Protobuf {
     static AttackReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxBdHRhY2sucHJvdG8SCHByb3RvYnVmIhgKBkF0dGFjaxIOCgZVc2VySUQY",
-            "ASABKAliBnByb3RvMw=="));
+            "CgxBdHRhY2sucHJvdG8SCHByb3RvYnVmIjgKBkF0dGFjaxIOCgZVc2VySUQY",
+            "AyABKAkiHgoEYWFhYRIHCgNhYWEQABINCgluZXdfa2V5XzEQAWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Attack), global::Protobuf.Attack.Parser, new[]{ "UserID" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Attack), global::Protobuf.Attack.Parser, new[]{ "UserID" }, null, new[]{ typeof(global::Protobuf.Attack.Types.aaaa) }, null, null)
           }));
     }
     #endregion
@@ -71,7 +71,7 @@ namespace Protobuf {
     }
 
     /// <summary>Field number for the "UserID" field.</summary>
-    public const int UserIDFieldNumber = 1;
+    public const int UserIDFieldNumber = 3;
     private string userID_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string UserID {
@@ -116,7 +116,7 @@ namespace Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
       if (UserID.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(26);
         output.WriteString(UserID);
       }
       if (_unknownFields != null) {
@@ -155,13 +155,25 @@ namespace Protobuf {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
+          case 26: {
             UserID = input.ReadString();
             break;
           }
         }
       }
     }
+
+    #region Nested types
+    /// <summary>Container for nested types declared in the Attack message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static partial class Types {
+      public enum aaaa {
+        [pbr::OriginalName("aaa")] Aaa = 0,
+        [pbr::OriginalName("new_key_1")] NewKey1 = 1,
+      }
+
+    }
+    #endregion
 
   }
 

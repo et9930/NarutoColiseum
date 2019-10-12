@@ -24,13 +24,14 @@ namespace Protobuf {
     static LoginReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgtMb2dpbi5wcm90bxIIcHJvdG9idWYiVgoFTG9naW4SCwoDYWFhGAEgASgB",
-            "EiEKA2JiYhgCIAEoDjIULnByb3RvYnVmLkxvZ2luLlR5cGUiHQoEVHlwZRIH",
-            "CgNuaWwQABIFCgFhEAESBQoBYhACYgZwcm90bzM="));
+            "CgtMb2dpbi5wcm90bxIIcHJvdG9idWYiagoFTG9naW4SCwoDYWFhGAMgASgB",
+            "EiEKA2JiYhgCIAEoDjIULnByb3RvYnVmLkxvZ2luLlR5cGUiGwoEVHlwZRIF",
+            "CgFjEAASBQoBYRABEgUKAWIQAiIUCgVUeXBlMhILCgduZXdfa2V5EABiBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Login), global::Protobuf.Login.Parser, new[]{ "Aaa", "Bbb" }, null, new[]{ typeof(global::Protobuf.Login.Types.Type) }, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Login), global::Protobuf.Login.Parser, new[]{ "Aaa", "Bbb" }, null, new[]{ typeof(global::Protobuf.Login.Types.Type), typeof(global::Protobuf.Login.Types.Type2) }, null, null)
           }));
     }
     #endregion
@@ -73,7 +74,7 @@ namespace Protobuf {
     }
 
     /// <summary>Field number for the "aaa" field.</summary>
-    public const int AaaFieldNumber = 1;
+    public const int AaaFieldNumber = 3;
     private double aaa_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public double Aaa {
@@ -85,7 +86,7 @@ namespace Protobuf {
 
     /// <summary>Field number for the "bbb" field.</summary>
     public const int BbbFieldNumber = 2;
-    private global::Protobuf.Login.Types.Type bbb_ = global::Protobuf.Login.Types.Type.Nil;
+    private global::Protobuf.Login.Types.Type bbb_ = global::Protobuf.Login.Types.Type.C;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Protobuf.Login.Types.Type Bbb {
       get { return bbb_; }
@@ -116,7 +117,7 @@ namespace Protobuf {
     public override int GetHashCode() {
       int hash = 1;
       if (Aaa != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Aaa);
-      if (Bbb != global::Protobuf.Login.Types.Type.Nil) hash ^= Bbb.GetHashCode();
+      if (Bbb != global::Protobuf.Login.Types.Type.C) hash ^= Bbb.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -130,13 +131,13 @@ namespace Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (Aaa != 0D) {
-        output.WriteRawTag(9);
-        output.WriteDouble(Aaa);
-      }
-      if (Bbb != global::Protobuf.Login.Types.Type.Nil) {
+      if (Bbb != global::Protobuf.Login.Types.Type.C) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Bbb);
+      }
+      if (Aaa != 0D) {
+        output.WriteRawTag(25);
+        output.WriteDouble(Aaa);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -149,7 +150,7 @@ namespace Protobuf {
       if (Aaa != 0D) {
         size += 1 + 8;
       }
-      if (Bbb != global::Protobuf.Login.Types.Type.Nil) {
+      if (Bbb != global::Protobuf.Login.Types.Type.C) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Bbb);
       }
       if (_unknownFields != null) {
@@ -166,7 +167,7 @@ namespace Protobuf {
       if (other.Aaa != 0D) {
         Aaa = other.Aaa;
       }
-      if (other.Bbb != global::Protobuf.Login.Types.Type.Nil) {
+      if (other.Bbb != global::Protobuf.Login.Types.Type.C) {
         Bbb = other.Bbb;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -180,12 +181,12 @@ namespace Protobuf {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 9: {
-            Aaa = input.ReadDouble();
-            break;
-          }
           case 16: {
             Bbb = (global::Protobuf.Login.Types.Type) input.ReadEnum();
+            break;
+          }
+          case 25: {
+            Aaa = input.ReadDouble();
             break;
           }
         }
@@ -197,9 +198,13 @@ namespace Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static partial class Types {
       public enum Type {
-        [pbr::OriginalName("nil")] Nil = 0,
+        [pbr::OriginalName("c")] C = 0,
         [pbr::OriginalName("a")] A = 1,
         [pbr::OriginalName("b")] B = 2,
+      }
+
+      public enum Type2 {
+        [pbr::OriginalName("new_key")] NewKey = 0,
       }
 
     }

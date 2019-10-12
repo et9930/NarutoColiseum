@@ -1,0 +1,10 @@
+syntax = "proto3";
+package protobuf;
+
+message Attack {
+    enum aaaa {
+        aaa = 0;
+        new_key_1 = 1;
+    }
+    string UserID = 3;
+}

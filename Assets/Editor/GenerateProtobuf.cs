@@ -8,7 +8,7 @@ namespace Editor
     {
         private const string GenerateProtobufMenu = "Tool/Generate Protobuf";
         private const string ProtoExec = "Assets\\Plugins\\Protobuf\\bin\\protoc.exe";
-        private const string ProtoPath = "Assets\\Plugins\\Protobuf\\MessagePrototype ";
+        private const string ProtoPath = "Assets\\MessagePrototype ";
         private const string CsharpPath = "Assets\\Scripts\\Generate\\Protobuf";
 
         [MenuItem(GenerateProtobufMenu)]

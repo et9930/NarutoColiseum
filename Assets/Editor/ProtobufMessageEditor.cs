@@ -8,26 +8,27 @@ using System.Text.RegularExpressions;
 
 namespace Editor
 {
-
-
     public class ProtobufMessageEditor : EditorWindow
     {
+        [SerializeField] private bool reset = true;
+        [SerializeField] private bool enable = false;
         private const string EditorTitle = "Protobuf Message Editor";
         private const string EditorMenu = "Tool/Protobuf Message Editor";
-        private const string ProtoPath = "Assets\\Plugins\\Protobuf\\MessagePrototype";
-        private List<string> m_MessageFileNames;
-        private List<string> m_MessageFilePaths;
-        private int m_SelectedFile = -1;
-        private List<MessageItem> m_MessageItems;
-        private List<EnumItem> m_EnumItems;
-        private ProtobufMessage m_Message;
-        private ProtobufMessage m_OriginMessage;
-        private Vector2 m_V1 = new Vector2(0, 0);
-        private Vector2 m_V2 = new Vector2(0, 0);
-        private string[] m_TypeList;
-        private bool m_HasError;
-        private List<int> m_IdList = new List<int>();
-        private List<string> m_NameList = new List<string>();
+        private const string ProtoPath = "Assets\\MessagePrototype";
+        [SerializeField] private List<string> m_MessageFileNames;
+        [SerializeField] private List<string> m_MessageFilePaths;
+        [SerializeField] private int m_SelectedFile = -1;
+        [SerializeField] private List<MessageItem> m_MessageItems;
+        [SerializeField] private List<EnumItem> m_EnumItems;
+        [SerializeField] private ProtobufMessage m_Message;
+        [SerializeField] private ProtobufMessage m_OriginMessage;
+        [SerializeField] private Vector2 m_V1 = new Vector2(0, 0);
+        [SerializeField] private Vector2 m_V2 = new Vector2(0, 0);
+        [SerializeField] private string[] m_TypeList;
+        [SerializeField] private bool m_HasError;
+        [SerializeField] private List<int> m_IdList = new List<int>();
+        [SerializeField] private List<string> m_NameList = new List<string>();
+        [SerializeField] private static Rect windoClickArea;
 
         public class Styles
         {
@@ -53,7 +54,25 @@ namespace Editor
         [MenuItem(EditorMenu)]
         public static void OpenEditor()
         {
-            GetWindow(typeof(ProtobufMessageEditor));
+            var window = GetWindow(typeof(ProtobufMessageEditor));
+            window.minSize = new Vector2(850, 500);
+            windoClickArea = window.position;
+        }
+
+
+        private void OnEnable()
+        {
+            if (reset)
+            {
+                if (m_SelectedFile == -1)
+                {
+                    m_Message = null;
+                }
+                else
+                {
+                    LoadAndDeserializeFile();
+                }
+            }
         }
 
         private void OnGUI()
@@ -61,6 +80,13 @@ namespace Editor
             if (m_Styles == null)
             {
                 m_Styles = new Styles();
+            }
+
+            Event e = Event.current;
+            windoClickArea = GUI.Window(0, windoClickArea, null, "MyWindow");
+            if (e.type == EventType.MouseDown && windoClickArea.Contains(e.mousePosition))
+            {
+                GUI.FocusControl(null);
             }
 
             m_HasError = false;
@@ -72,10 +98,15 @@ namespace Editor
             m_V1 = GUILayout.BeginScrollView(m_V1, false, false, GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(Screen.height));
             {
                 var old = m_SelectedFile;
-                m_SelectedFile = GUILayout.SelectionGrid(m_SelectedFile, m_MessageFileNames.ToArray(), 1, m_Styles.ListItem);
-                if (old != m_SelectedFile)
+                var temp_select = GUILayout.SelectionGrid(m_SelectedFile, m_MessageFileNames.ToArray(), 1, m_Styles.ListItem);
+                if (old != temp_select)
                 {
-                    LoadAndDeserializeFile();
+                    GUI.FocusControl(null);
+                    if (CheckSave())
+                    {
+                        m_SelectedFile = temp_select;
+                        LoadAndDeserializeFile();
+                    }
                 }
                 if (GUILayout.Button("Add new message"))
                 {
@@ -101,7 +132,7 @@ namespace Editor
                 GUILayout.Space(5);
                 GUILayout.Label(" Enum Items", m_Styles.TitleStyle);
                 GUILayout.BeginVertical();
-                Debug.Log(m_EnumItems.Count);
+                var tempEnumName = new List<string>();
                 for (var i = 0; i < m_EnumItems.Count; i++)
                 {
                     GUILayout.Space(5);
@@ -110,22 +141,65 @@ namespace Editor
                     GUILayout.BeginVertical();
                     GUILayout.Label(" Enum Item " + (i + 1), m_Styles.BoldStyle);
                     enumItem.Name = EditorGUILayout.TextField("name", enumItem.Name);
+                    var enumNameError = CheckEnumNameError(ref tempEnumName, enumItem.Name);
+                    if (!string.IsNullOrWhiteSpace(enumNameError))
+                    {
+                        m_HasError = true;
+                        EditorGUILayout.HelpBox(enumNameError, UnityEditor.MessageType.Error);
+                    }
+                    var enumNameNumberError = CheckEnumNameNumberError(enumItem.Name);
+                    if (!string.IsNullOrWhiteSpace(enumNameNumberError))
+                    {
+                        m_HasError = true;
+                        EditorGUILayout.HelpBox(enumNameNumberError, UnityEditor.MessageType.Error);
+                    }
                     var tempItems = new Dictionary<string, string>();
+                    var tempKeys = new List<string>();
+                    var tempValues = new List<string>();
                     foreach (var enumItemEnumItem in enumItem.EnumItems)
                     {
                         GUILayout.BeginHorizontal();
                         var tempKey = EditorGUILayout.TextField("key", enumItemEnumItem.Key);
                         var tempValue = EditorGUILayout.TextField("value", enumItemEnumItem.Value);
+                        tempItems[tempKey] = tempValue;
                         if (GUILayout.Button("Delete"))
                         {
-                            //Delete enum item
+                            tempItems.Remove(tempKey);
                         }
-                        tempItems[tempKey] = tempValue;
                         GUILayout.EndHorizontal();
+                        var keyNumberError = CheckEnumKeyNumberError(tempKey);
+                        if (!string.IsNullOrWhiteSpace(keyNumberError))
+                        {
+                            m_HasError = true;
+                            EditorGUILayout.HelpBox(keyNumberError, UnityEditor.MessageType.Error);
+                        }
+                        var valueNumberError = CheckEnumValueNumberError(tempValue);
+                        if (!string.IsNullOrWhiteSpace(valueNumberError))
+                        {
+                            m_HasError = true;
+                            EditorGUILayout.HelpBox(valueNumberError, UnityEditor.MessageType.Error);
+                        }
+                        var enumRepeatedError = CheckEnumRepeatedError(ref tempKeys, ref tempValues, tempKey, tempValue);
+                        if (!string.IsNullOrWhiteSpace(enumRepeatedError))
+                        {
+                            m_HasError = true;
+                            EditorGUILayout.HelpBox(enumRepeatedError, UnityEditor.MessageType.Error);
+                        }
+                    }
+                    enumItem.EnumItems = tempItems;
+                    var enumZeroError = CheckEnumZeroError(enumItem);
+                    if (!string.IsNullOrWhiteSpace(enumZeroError))
+                    {
+                        m_HasError = true;
+                        EditorGUILayout.HelpBox(enumZeroError, UnityEditor.MessageType.Error);
                     }
                     if (GUILayout.Button("Add enum key"))
                     {
-                        //add enum item
+                        AddEnumKey(enumItem);
+                    }
+                    if (GUILayout.Button("Delete enum item"))
+                    {
+                        m_EnumItems.Remove(enumItem);
                     }
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
@@ -134,7 +208,8 @@ namespace Editor
                 GUILayout.Space(5);
                 if (GUILayout.Button("Add a enum item"))
                 {
-                    // Add a Enum item
+                    m_EnumItems.Add(new EnumItem{EnumItems = new Dictionary<string, string>()});
+                    GetAllTypes();
                 }
                 GUILayout.Space(5);
                 GUILayout.Label(" Message Items", m_Styles.TitleStyle);
@@ -177,13 +252,13 @@ namespace Editor
                     
                     temp = EditorGUILayout.Popup("type", temp, m_TypeList);
                     messageItem.Type = m_TypeList[temp];
-
                     messageItem.Repeated = EditorGUILayout.Toggle("repeated", messageItem.Repeated);
+                    messageItem.Optional = EditorGUILayout.Toggle("optional", messageItem.Optional);
                     GUILayout.EndVertical();
                     GUILayout.Space(5);
                     GUILayout.BeginVertical(GUILayout.MaxWidth(100));
                     GUILayout.Space(14);
-                    if (GUILayout.Button("Delete", GUILayout.Height(54)))
+                    if (GUILayout.Button("Delete", GUILayout.Height(90)))
                     {
                         // Delete message item
                         DeleteMessageItem(i);
@@ -201,11 +276,21 @@ namespace Editor
                 }
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Save message"))
+                if (m_Message.Equals(m_OriginMessage))
                 {
-                    // Save message
-                    SaveMessage();
+                    if (GUILayout.Button("Save message"))
+                    {
+                        SaveMessage();
+                    }
                 }
+                else
+                {
+                    if (GUILayout.Button("* Save message *"))
+                    {
+                        SaveMessage();
+                    }
+                }
+
                 GUILayout.Space(5);
                 if (GUILayout.Button("Delete message"))
                 {
@@ -219,6 +304,56 @@ namespace Editor
             GUILayout.EndScrollView();
             GUILayout.Space(5);
             GUILayout.EndHorizontal();
+        }
+
+        private string CheckEnumNameError(ref List<string> tempNameList, string enumItemName)
+        {
+            if (tempNameList.Contains(enumItemName))
+            {
+                return "Enum name " + enumItemName + " is repeated!";
+            }
+            tempNameList.Add(enumItemName);
+            return "";
+        }
+
+        private string CheckEnumNameNumberError(string name)
+        {
+            try
+            {
+                int tempId = int.Parse(name);
+                return "Enum name " + name + " can't be number!";
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
+        private string CheckEnumKeyNumberError(string key)
+        {
+            try
+            {
+                int tempId = int.Parse(key);
+                return "Key " + key + " can't be number!";
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
+        private string CheckEnumValueNumberError(string value)
+        {
+            // is number
+            try
+            {
+                int tempId = int.Parse(value);
+                return "";
+            }
+            catch (Exception)
+            {
+                return "Value " + value + " must be number!";
+            }
         }
 
         private void SaveMessage()
@@ -236,6 +371,7 @@ namespace Editor
             }
             File.WriteAllText(newName, massageStr);
             ReadMessageFileLists();
+            LoadAndDeserializeFile();
             AssetDatabase.Refresh();
             OnGUI();
         }
@@ -260,6 +396,23 @@ namespace Editor
         private void AddMessageItem()
         {
             m_Message.MessageItems.Add(new MessageItem());
+        }
+
+        private void AddEnumKey(EnumItem enumItem)
+        {
+            if (!enumItem.EnumItems.ContainsKey("new_key"))
+            {
+                enumItem.EnumItems.Add("new_key", "");
+            }
+            else
+            {
+                var id = 1;
+                while (enumItem.EnumItems.ContainsKey("new_key_" + id))
+                {
+                    id++;
+                }
+                enumItem.EnumItems.Add("new_key_" + id, "");
+            }
         }
 
         private void CreateMessageFile()
@@ -342,16 +495,18 @@ namespace Editor
                     {
                         continue;
                     }
-                    var messageItem = new MessageItem {Repeated = false};
+                    var messageItem = new MessageItem {Repeated = false, Optional = false};
                     bool hasType = false;
                     bool hasName = false;
                     foreach (var word in words)
                     {
-                        Debug.Log(word);
                         switch (word)
                         {
                             case "repeated":
                                 messageItem.Repeated = true;
+                                break;
+                            case "optional":
+                                messageItem.Optional = true;
                                 break;
                             default:
                                 if (!hasType)
@@ -396,6 +551,7 @@ namespace Editor
             m_MessageItems = m_Message.MessageItems;
             m_EnumItems = m_Message.EnumItems;
             GetAllTypes();
+            m_OriginMessage = ProtobufMessage.Copy(m_Message);
         }
 
         private void OnInspectorUpdate()
@@ -406,12 +562,20 @@ namespace Editor
 
         private void GetAllTypes()
         {
-            List<string> newTypeList = new List<string> {"double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes"};
+            List<string> newTypeList = new List<string>
+            {
+                "double", "float", "int32", 
+                "int64", "uint32", "uint64", 
+                "sint32", "sint64", "fixed32", 
+                "fixed64", "sfixed32", "sfixed64", 
+                "bool", "string", "bytes"
+            };
+            newTypeList.Add("");
             foreach (var fileName in m_MessageFileNames)
             {
                 newTypeList.Add(fileName.Substring(0, 1).ToUpper() + fileName.Substring(1));
             }
-
+            newTypeList.Add("");
             foreach (var enumItem in m_EnumItems)
             {
                 newTypeList.Add(enumItem.Name);
@@ -478,12 +642,84 @@ namespace Editor
             // repeated
             if (m_NameList.Contains(name))
             {
-                return "Name is repeated!";
+                return "Name " + name + " is repeated!";
             }
 
             m_NameList.Add(name);
             return "";
         }
 
+        private string CheckEnumZeroError(EnumItem enumItem)
+        {
+            if (!enumItem.EnumItems.ContainsValue("0"))
+            {
+                return "Enum must have 0 value!";
+            }
+
+            return "";
+        }
+
+        private string CheckEnumRepeatedError(ref List<string> tempKey, ref List<string> tempValue, string key, string value)
+        {
+            if (tempKey.Contains(key))
+            {
+                return "Key " + key + " is repeated!";
+            }
+
+            tempKey.Add(key);
+
+            if (tempValue.Count == 0 && value != "0")
+            {
+                tempValue.Add(value);
+                return "First key " + key + "'s value must is 0!";
+            }
+
+            if (tempValue.Contains(value))
+            {
+                return "Value " + value + " is repeated!";
+            }
+
+            tempValue.Add(value);
+
+            return "";
+        }
+
+        private bool CheckSave()
+        {
+            if (m_Message == null || m_OriginMessage == null)
+            {
+                return true;
+            }
+            if (m_Message.Equals(m_OriginMessage))
+            {
+                return true;
+            }
+
+            return EditorUtility.DisplayDialog("Not saved", "This Message is not saved, continue?", "Yes", "No");
+        }
+
+        private void OnFocus()
+        {
+            enable = true;
+        }
+
+        private void OnLostFocus()
+        {
+            enable = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (!CheckSave())
+            {
+                reset = false;
+                var newWin = Instantiate(this);
+                newWin.m_Message = m_Message;
+                newWin.m_OriginMessage = m_OriginMessage;
+                newWin.m_EnumItems = m_EnumItems;
+                newWin.reset = true;
+                newWin.Show();
+            }
+        }
     }
 }

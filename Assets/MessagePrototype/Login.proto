@@ -3,10 +3,13 @@ package protobuf;
 
 message Login {
     enum Type {
-        nil = 0;
+        c = 0;
         a = 1;
         b = 2;
     }
-    double aaa = 1;
+    enum Type2 {
+        new_key = 0;
+    }
+    double aaa = 3;
     Type bbb = 2;
 }
