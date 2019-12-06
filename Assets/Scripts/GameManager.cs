@@ -2,6 +2,7 @@
 using Google.Protobuf;
 using Helper;
 using Protobuf;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
