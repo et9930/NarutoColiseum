@@ -10,7 +10,7 @@ namespace Framework.SystemGroups
 
         private void Start()
         {
-            var fixedUpdateGroup = World.Active.GetOrCreateSystem<FixedUpdateGroup>();
+            var fixedUpdateGroup = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<FixedUpdateGroup>();
             fixedUpdateGroup.Enabled = false;
             m_FixedUpdateGroupSystems = fixedUpdateGroup.Systems;
         }
