@@ -6,7 +6,7 @@ namespace Editor
 {
     public class DebugOutputToggle : EditorWindow
     {
-        private const string debugOutputMenu = "Tool/Debug Output";
+        private const string debugOutputMenu = "Tools/Debug Output";
         private static bool debugOutputOn = true;
         private const string _DEBUG_OUTPUT = "DEBUG_OUTPUT";
         private static ScriptingDefineSymbols _scriptingDefineSymbols = new ScriptingDefineSymbols();

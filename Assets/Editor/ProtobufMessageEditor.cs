@@ -13,7 +13,7 @@ namespace Editor
         [SerializeField] private bool reset = true;
         [SerializeField] private bool enable = false;
         private const string EditorTitle = "Protobuf Message Editor";
-        private const string EditorMenu = "Tool/Protobuf Message Editor";
+        private const string EditorMenu = "Tools/Protobuf Message Editor";
         private const string ProtoPath = "Assets\\MessagePrototype";
         [SerializeField] private List<string> m_MessageFileNames;
         [SerializeField] private List<string> m_MessageFilePaths;
